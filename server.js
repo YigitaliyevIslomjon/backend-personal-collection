@@ -27,5 +27,5 @@ app.use("/api", indexRoute);
 app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log("port is working nows");
+  console.log(`Started up at prot ${PORT}`);
 });
