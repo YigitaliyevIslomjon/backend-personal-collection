@@ -1,7 +1,6 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -24,6 +23,16 @@
     "nodemon": "^2.0.20"
   },
   "engines": {
-    "node":"16.13.0"
-  }
+    "node": "16.13.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YigitaliyevIslomjon/backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/YigitaliyevIslomjon/backend/issues"
+  },
+  "homepage": "https://github.com/YigitaliyevIslomjon/backend#readme",
+  "description": ""
 }
