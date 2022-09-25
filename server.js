@@ -1,8 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const indexRoute = require("./src/routes/index");
-const errorHandler = require("./src/middleware/errorHandler");
-const authenticateToken = require("./src/middleware/auth");
+const indexRoute = require("./routes/index");
+const errorHandler = require("./middleware/errorHandler");
+const authenticateToken = require("./middleware/auth");
 const dotenv = require("dotenv");
 const cors = require("cors");
 dotenv.config();
