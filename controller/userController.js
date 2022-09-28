@@ -50,7 +50,7 @@ const loginUser = async (req, res) => {
   if (findUser) {
     const validPassword = await bcrypt.compare(password, findUser.password);
     if (validPassword) {
-      let token = await user.generateAccessToken();
+      let token = await findUser.generateAccessToken();
       let user = await User.findByIdAndUpdate(
         findUser._id,
         { sign_in_at: new Date() },
