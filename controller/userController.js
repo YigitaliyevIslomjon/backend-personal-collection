@@ -48,7 +48,7 @@ const loginUser = async (req, res) => {
   const { password, email } = req.body;
   const findUser = await User.findOne({ email });
   if (findUser) {
-    const validPassword = await bcrypt.compare(password, user.password);
+    const validPassword = await bcrypt.compare(password, findUser.password);
     if (validPassword) {
       let token = await user.generateAccessToken();
       let user = await User.findByIdAndUpdate(
