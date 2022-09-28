@@ -1,4 +1,3 @@
-const express = require("express");
 const { User, validateUserSignUp } = require("../model/user");
 const bcrypt = require("bcrypt");
 require("express-async-errors");
@@ -56,13 +55,13 @@ const loginUser = async (req, res) => {
         { sign_in_at: new Date() },
         { new: true }
       );
-      user = await user.save();
+      user.save();
       return res.status(200).json({ token, user });
     } else {
-      res.status(400).json({ error: "Invalid Password" });
+      return res.status(400).json({ error: "Invalid Password" });
     }
   } else {
-    res.status(401).json({ error: "User does not exist" });
+    return res.status(404).json({ error: "User does not exist" });
   }
 };
 
