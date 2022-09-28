@@ -9,13 +9,9 @@ dotenv.config();
 
 const app = express();
 
-app.use("/api", async () => {
-  return res.status(404).json({ message: "save" });
-});
 mongoose
   .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
   })
   .then((res) => {
     console.log("mongodb is connected");
@@ -29,7 +25,7 @@ app.use(cors());
 
 app.use("/api", indexRoute);
 app.use(errorHandler);
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Started up at prot ${PORT}`);
 });
