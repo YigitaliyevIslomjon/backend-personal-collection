@@ -19,13 +19,13 @@
     "express-async-errors": "^3.1.1",
     "joi": "^17.6.1",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.4",
     "mongoose": "^6.6.1",
     "nodemon": "^2.0.20"
   },
   "engines": {
     "node": "16.13.0"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/YigitaliyevIslomjon/backend.git"
