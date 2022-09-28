@@ -13,7 +13,7 @@ const authenticateToken = require("../middleware/auth");
 const router = express.Router();
 
 router.post("/login", loginUser);
-router.post("/", createUser);
+router.post("/sign-up", createUser);
 router.use(authenticateToken);
 router.get("/", getUserList);
 router.get("/:id", getUserById);
