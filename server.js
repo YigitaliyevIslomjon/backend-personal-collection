@@ -22,13 +22,11 @@ mongoose
 
 app.use(express.json());
 app.use(cors());
-app.use("/error", async (req, res) => {
-  return res.json({ error: "err" });
-});
+
 app.use("/api", indexRoute);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8001;
 app.listen(PORT, () => {
   console.log(`Started up at prot ${PORT}`);
 });

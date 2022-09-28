@@ -1,3 +1,4 @@
+const express = require("express");
 const { User, validateUserSignUp } = require("../model/user");
 const bcrypt = require("bcrypt");
 require("express-async-errors");
@@ -45,23 +46,23 @@ const createUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   const { password, email } = req.body;
-  const user = await User.findOne({ email });
-  if (user) {
+  const findUser = await User.findOne({ email });
+  if (findUser) {
     const validPassword = await bcrypt.compare(password, user.password);
     if (validPassword) {
       let token = await user.generateAccessToken();
       let user = await User.findByIdAndUpdate(
-        user._id,
+        findUser._id,
         { sign_in_at: new Date() },
         { new: true }
       );
-      user.save();
+      user = await user.save();
       return res.status(200).json({ token, user });
     } else {
       return res.status(400).json({ error: "Invalid Password" });
     }
   } else {
-    return res.status(404).json({ error: "User does not exist" });
+    return res.status(401).json({ error: "User does not exist" });
   }
 };
 
