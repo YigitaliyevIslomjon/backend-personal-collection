@@ -9,6 +9,9 @@ dotenv.config();
 
 const app = express();
 
+app.use("/api", async () => {
+  return res.status(404).json({ message: "save" });
+});
 mongoose
   .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
