@@ -51,12 +51,12 @@ const loginUser = async (req, res) => {
     const validPassword = await bcrypt.compare(password, user.password);
     if (validPassword) {
       let token = await user.generateAccessToken();
-      let updateUser = await User.findByIdAndUpdate(
+      let user = await User.findByIdAndUpdate(
         user._id,
         { sign_in_at: new Date() },
         { new: true }
       );
-      updateUser.save();
+      user = await user.save();
       return res.status(200).json({ token, user });
     } else {
       res.status(400).json({ error: "Invalid Password" });
@@ -67,7 +67,6 @@ const loginUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  console.log(req.body);
   const { error } = validateUserSignUp(req.body);
   if (error) {
     return res.status(400).json({ error: error.details[0].message });
@@ -136,7 +135,7 @@ const updateUserUnblock = async (req, res) => {
         new: true,
       }
     );
-    user.save();
+    user = await user.save();
   });
 
   return res.status(200).json("success");
