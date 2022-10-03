@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const userSignUpSchema = new Schema({
-  name: {
+  user_name: {
     type: String,
     required: true,
   },
@@ -34,7 +34,7 @@ const User = mongoose.model("User", userSignUpSchema);
 
 function validateUserSignUp(data) {
   const userSignUpSchema = Joi.object({
-    name: Joi.string().required(),
+    user_name: Joi.string().required(),
     email: Joi.string().email({ tlds: { allow: false } }),
     password: Joi.string().required(),
     status: Joi.boolean().optional(),

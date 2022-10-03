@@ -7,9 +7,9 @@ const cors = require("cors");
 dotenv.config();
 
 const app = express();
-
+console.log("salom");
 mongoose
-  .connect(process.env.MONGODB_URI, {
+  .connect(process.env.MONGODB_URI_local, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -26,7 +26,7 @@ app.use(cors());
 app.use("/api", indexRoute);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 8001;
+const PORT = 4000;
 app.listen(PORT, () => {
   console.log(`Started up at prot ${PORT}`);
 });
