@@ -1,12 +1,13 @@
-import "express-async-errors";
-const ItemExtraField = require("../model/itemExtraFieldModal");
+const { ItemExtraField } = require("../model/itemExtraFieldModal");
 
-export const getItemExtraFieldList = async (req, res) => {
+require("express-async-errors");
+
+const getItemExtraFieldList = async (req, res) => {
   const itemExtraField = await ItemExtraField.find({}).populate("collection");
   return res.status(200).json(itemExtraField);
 };
 
-export const createItemExtraField = async (req, res) => {
+const createItemExtraField = async (req, res) => {
   const {
     int_field,
     str_field,
@@ -42,13 +43,13 @@ export const createItemExtraField = async (req, res) => {
     collection_id,
   });
   const result = await itemExtraField.save();
-  return res.status(200).json(result);
+  return res.status(200).json({ data: result });
 };
 
-export const updateItemExtraField = async (req, res) => {
+const updateItemExtraField = async (req, res) => {
   const result = await ItemExtraField.findById(req.params.id);
   if (!result) {
-    return res.status(400).json("bunday ItemExtraField mavjud emas");
+    return res.status(400).json({ error: "bunday ItemExtraField mavjud emas" });
   }
   const {
     int_field,
@@ -76,11 +77,18 @@ export const updateItemExtraField = async (req, res) => {
   return res.status(200).json(updateItemExtraField);
 };
 
-export const deleteItemExtraField = async (req, res) => {
+const deleteItemExtraField = async (req, res) => {
   let id = req.params.id;
   const result = await ItemExtraField.findByIdAndDelete(id);
   if (!result) {
     return res.status(200).json("error");
   }
   return res.status(200).json("success");
+};
+
+module.exports = {
+  getItemExtraFieldList,
+  createItemExtraField,
+  updateItemExtraField,
+  deleteItemExtraField,
 };

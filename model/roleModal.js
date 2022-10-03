@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
-
+const Joi = require("joi");
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-export const roleSchema = new Schema({
+const roleSchema = new Schema({
   role_name: {
     type: String,
   },
@@ -15,4 +15,15 @@ export const roleSchema = new Schema({
 });
 
 const Role = mongoose.model("Role", roleSchema);
-export default Role;
+const validateRole = (data) => {
+  let roleSchema = Joi.object({
+    role_name: Joi.string().required(),
+    permissions: Joi.array().items().required(),
+  });
+  return roleSchema.validate(data);
+};
+
+module.exports = {
+  Role,
+  validateRole,
+};

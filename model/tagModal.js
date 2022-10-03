@@ -1,7 +1,8 @@
-import mongoose from "mongoose";
+const Joi = require("joi");
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-export const tagSchema = new Schema({
+const tagSchema = new Schema({
   tag_name: {
     type: String,
     unique: true,
@@ -9,4 +10,15 @@ export const tagSchema = new Schema({
 });
 
 const Tag = mongoose.model("Tag", tagSchema);
-export default Tag;
+
+const validateTag = (data) => {
+  const tagSchema = Joi.object({
+    tag_name: Joi.string().required(),
+  });
+  return tagSchema.validate(data);
+};
+
+module.exports = {
+  Tag,
+  validateTag,
+};

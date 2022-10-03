@@ -2,8 +2,8 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-export const commentSchema = new Schema({
-  comment: {
+const commentSchema = new Schema({
+  text: {
     type: String,
   },
   item_id: {

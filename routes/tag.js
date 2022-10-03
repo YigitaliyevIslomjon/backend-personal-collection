@@ -1,5 +1,5 @@
-import express from "express";
-import { getTagList } from "../controller/tagController.js";
+const express = require("express");
+const { getTagList } = require("../controller/tagController");
 
 const router = express.Router();
 
@@ -8,4 +8,4 @@ router.post("/");
 router.put("/");
 router.delete("/");
 
-export default router;
+module.exports = router;

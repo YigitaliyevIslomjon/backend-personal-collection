@@ -1,10 +1,11 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   createRole,
   deleteRole,
   getRoleList,
   updateRole,
-} from "../controller/roleController.js";
+} = require("../controller/roleController");
+
 const router = express.Router();
 
 router.get("/", getRoleList);
@@ -12,4 +13,4 @@ router.post("/", createRole);
 router.put("/:id", updateRole);
 router.delete("/:id", deleteRole);
 
-export default router;
+module.exports  = router;

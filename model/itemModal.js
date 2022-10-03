@@ -1,8 +1,8 @@
-import Joi from "joi";
-import mongoose from "mongoose";
+const Joi = require("joi");
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-export const itemSchema = new Schema({
+const itemSchema = new Schema({
   item_name: {
     type: String,
   },
@@ -30,7 +30,7 @@ export const itemSchema = new Schema({
 const Item = mongoose.model("Item", itemSchema);
 
 const validateItem = (data) => {
-  const itemSchema = Joi.Object({
+  const itemSchema = Joi.object({
     item_name: Joi.string().required(),
     tags: Joi.array().required(),
     collection_id: Joi.string().required(),
@@ -41,7 +41,7 @@ const validateItem = (data) => {
     checkbox_field: Joi.array().required(),
     date_field: Joi.array().required(),
   });
-  return itemSchema.validateItem(data);
+  return itemSchema.validate(data);
 };
 
 module.exports = {

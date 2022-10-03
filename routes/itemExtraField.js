@@ -1,10 +1,10 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   createItemExtraField,
   deleteItemExtraField,
   getItemExtraFieldList,
   updateItemExtraField,
-} from "../controller/ItemExtraFieldController.js";
+} = require("../controller/ItemExtraFieldController");
 
 const router = express.Router();
 
@@ -13,4 +13,4 @@ router.post("/", createItemExtraField);
 router.put("/:id", updateItemExtraField);
 router.delete("/:id", deleteItemExtraField);
 
-export default router;
+module.exports  = router;

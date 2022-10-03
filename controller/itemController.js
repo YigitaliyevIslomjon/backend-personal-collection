@@ -1,12 +1,14 @@
-const Item = require("../model/itemModal");
-const Tag = require("../model/tagModal");
+const { Item } = require("../model/itemModal");
+const { Tag } = require("../model/tagModal");
 
-export const getItemList = async (req, res) => {
+require("express-async-errors");
+
+const getItemList = async (req, res) => {
   const item = await Item.find({});
   return res.status(200).json(item);
 };
 
-export const getItemById = async (req, res) => {
+const getItemById = async (req, res) => {
   const itemList = await Item.findOne({ collection_id: req.params.id }).select(
     "-collection_id -__v -textare_field -checkbox_field -int_field"
   );
@@ -17,7 +19,7 @@ export const getItemById = async (req, res) => {
   return res.status(200).json({ data: itemList });
 };
 
-export const createItem = async (req, res) => {
+const createItem = async (req, res) => {
   const {
     item_name,
     collection_id,
@@ -25,6 +27,7 @@ export const createItem = async (req, res) => {
     tags,
     int_field,
     str_field,
+
     textare_field,
     checkbox_field,
     date_field,
@@ -52,10 +55,10 @@ export const createItem = async (req, res) => {
     date_field,
   });
   result.save();
-  res.status(200).json(result);
+  res.status(200).json({ data: result });
 };
 
-export const updateItem = async (req, res) => {
+const updateItem = async (req, res) => {
   const {
     item_name,
     collection_id,
@@ -63,6 +66,7 @@ export const updateItem = async (req, res) => {
     tags,
     int_field,
     str_field,
+
     textare_field,
     checkbox_field,
     date_field,
@@ -97,11 +101,19 @@ export const updateItem = async (req, res) => {
   res.status(200).json({ data: updateItem });
 };
 
-export const deleteItem = async (req, res) => {
+const deleteItem = async (req, res) => {
   let id = req.params.id;
   const result = await Item.findByIdAndDelete(id);
   if (!result) {
     return res.status(200).json("error");
   }
   return res.status(200).json("success");
+};
+
+module.exports = {
+  getItemList,
+  getItemById,
+  createItem,
+  updateItem,
+  deleteItem,
 };

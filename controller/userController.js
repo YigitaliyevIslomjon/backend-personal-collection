@@ -1,5 +1,4 @@
-const express = require("express");
-const { User, validateUserSignUp } = require("../model/user");
+const { User, validateUserSignUp } = require("../model/userModal");
 const bcrypt = require("bcrypt");
 require("express-async-errors");
 

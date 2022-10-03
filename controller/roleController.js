@@ -1,13 +1,12 @@
-import "express-async-errors";
-import Role from "../model/roleModal.js";
-import Permission from "../model/persmissionModal.js";
+const { Role } = require("../model/roleModal");
+require("express-async-errors");
 
-export const getRoleList = async (req, res) => {
+const getRoleList = async (req, res) => {
   const role = await Role.find({}).populate("permissions");
   return res.status(200).json(role);
 };
 
-export const createRole = async (req, res) => {
+const createRole = async (req, res) => {
   const { role_name, permissions } = req.body;
   const thereIs = await Role.findOne({ role_name: role_name });
   if (thereIs) {
@@ -15,14 +14,14 @@ export const createRole = async (req, res) => {
   }
   const natija = new Role({ role_name, permissions: permissions });
   const result = await natija.save();
-  return res.status(200).json(result);
+  return res.status(200).json({ data: result });
 };
 
-export const updateRole = async (req, res) => {
+const updateRole = async (req, res) => {
   const { role_name, permissions } = req.body;
   const result = await Role.findById(req.params.id);
   if (!result) {
-    return res.status(400).json("bunday Role mavjud emas");
+    return res.status(400).json({ error: "bunday Role mavjud emas" });
   }
 
   const updateRole = await Role.findByIdAndUpdate(
@@ -38,11 +37,18 @@ export const updateRole = async (req, res) => {
   return res.status(200).json(updateRole);
 };
 
-export const deleteRole = async (req, res) => {
+const deleteRole = async (req, res) => {
   let id = req.params.id;
   const result = await Role.findByIdAndDelete(id);
   if (!result) {
     return res.status(200).json("error");
   }
   return res.status(200).json("success");
+};
+
+module.exports = {
+  getRoleList,
+  createRole,
+  updateRole,
+  deleteRole,
 };

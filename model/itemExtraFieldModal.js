@@ -1,7 +1,8 @@
+const Joi = require("joi");
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-export const itemExtraFieldSchema = new Schema({
+const itemExtraFieldSchema = new Schema({
   int_field: [
     {
       name: String,

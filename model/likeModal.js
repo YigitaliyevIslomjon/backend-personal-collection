@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
-
+const Joi = require("joi");
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-export const likeSchema = new Schema({
+const likeSchema = new Schema({
   like_status: {
     type: String,
     enum: [1, 0],
@@ -19,4 +19,17 @@ export const likeSchema = new Schema({
 });
 
 const Like = mongoose.model("Like", likeSchema);
-export default Like;
+
+const validateLike = (data) => {
+  const likeSchema = Joi.object({
+    like_status: Joi.boolean().required(),
+    user_id: Joi.string().required(),
+    item_id: Joi.string().required(),
+  });
+  return likeSchema.validate(data);
+};
+
+module.exports = {
+  Like,
+  validateLike,
+};

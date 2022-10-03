@@ -1,5 +1,5 @@
-import express from "express";
-import multer from "multer";
+const express = require("express");
+const multer = require("multer");
 
 //Configuration for Multer
 const multerStorage = multer.diskStorage({
@@ -25,18 +25,20 @@ const upload = multer({
   // fileFilter: multerFilter,
 });
 
-import {
+const {
   createCollection,
   deleteCollection,
   getCollectionById,
   getCollectionList,
   updateCollection,
-} from "../controller/collectionController.js";
+} = require("../controller/collectionController");
+
 const router = express.Router();
+
 router.get("/", getCollectionList);
 router.get("/:id", getCollectionById);
 router.post("/", upload.single("img"), createCollection);
 router.put("/:id", updateCollection);
 router.delete("/:id", deleteCollection);
 
-export default router;
+module.exports = router;

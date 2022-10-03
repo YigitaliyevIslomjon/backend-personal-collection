@@ -1,8 +1,9 @@
-import mongoose from "mongoose";
+const Joi = require("joi");
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-export const permissionSchema = new Schema({
-  name: {
+const permissionSchema = new Schema({
+  permission_name: {
     type: String,
   },
   roles: [
@@ -14,4 +15,16 @@ export const permissionSchema = new Schema({
 });
 
 const Permission = mongoose.model("Permission", permissionSchema);
-export default Permission;
+
+const validatePermission = (data) => {
+  const permissionSchema = Joi.object({
+    permission_name: Joi.string().required(),
+    roles: Joi.array().items().required(),
+  });
+  return permissionSchema.validate(data);
+};
+
+module.exports = {
+  Permission,
+  validatePermission,
+};
