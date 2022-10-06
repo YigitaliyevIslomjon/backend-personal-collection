@@ -13,4 +13,4 @@ router.post("/", createRole);
 router.put("/:id", updateRole);
 router.delete("/:id", deleteRole);
 
-module.exports  = router;
+module.exports = router;

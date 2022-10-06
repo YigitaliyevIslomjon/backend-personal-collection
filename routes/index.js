@@ -10,6 +10,7 @@ const permissionRoute = require("./permission");
 const roleRoute = require("./role");
 const tagRoute = require("./tag");
 const itemExtraFieldRoute = require("./itemExtraField");
+const topicRoute = require("./topic");
 
 router.use("/user", userRoute);
 router.use(authenticateToken);
@@ -21,4 +22,5 @@ router.use("/like", likeRoute);
 router.use("/permission", permissionRoute);
 router.use("/role", roleRoute);
 router.use("/tags", tagRoute);
+router.use("/topic", topicRoute);
 module.exports = router;

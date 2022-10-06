@@ -5,7 +5,7 @@ require("express-async-errors");
 const getUserList = async (req, res) => {
   const { pageSize, pageNumber } = req.query;
   const user = await User.find({});
-  // .sort({ sign_up_at: 1 })
+  // .sort({ updated_at: 1 })
   // .skip((pageNumber - 1) * pageSize)
   // .limit(pageSize);
   return res.status(200).json(user);
@@ -17,8 +17,6 @@ const getUserById = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
-  console.log(req.body);
-
   let { user_name, email, password } = req.body;
   let checkEmail = await User.findOne({ email: req.body.email });
   if (checkEmail) {
@@ -33,9 +31,10 @@ const createUser = async (req, res) => {
   let user = await User.create({
     user_name,
     email,
+    role: "admin",
     password,
-    sign_in_at: new Date(),
-    sign_up_at: new Date(),
+    created_at: new Date(),
+    updated_at: new Date(),
   });
 
   let token = user.generateAccessToken();
@@ -55,7 +54,7 @@ const loginUser = async (req, res) => {
       let token = await findUser.generateAccessToken();
       let user = await User.findByIdAndUpdate(
         findUser._id,
-        { sign_in_at: new Date() },
+        { created_at: new Date() },
         { new: true }
       );
       user = await user.save();
@@ -71,13 +70,14 @@ const loginUser = async (req, res) => {
 const loginUserAdmin = async (req, res) => {
   const { password, email } = req.body;
   const findUser = await User.findOne({ email });
-  if (findUser) {
+
+  if (findUser?.role === "admin") {
     const validPassword = await bcrypt.compare(password, findUser.password);
     if (validPassword) {
       let token = await findUser.generateAccessToken();
       let user = await User.findByIdAndUpdate(
         findUser._id,
-        { sign_in_at: new Date() },
+        { created_at: new Date() },
         { new: true }
       );
       user = await user.save();
@@ -85,49 +85,51 @@ const loginUserAdmin = async (req, res) => {
     } else {
       return res.status(400).json({ error: "Invalid Password" });
     }
+  } else if (findUser) {
+    return res.status(401).json({ error: "User is not admin, cannt access" });
   } else {
     return res.status(401).json({ error: "User does not exist" });
   }
 };
 
 const updateUser = async (req, res) => {
-  const { error } = validateUserSignUp(req.body);
-  if (error) {
-    return res.status(400).json({ error: error.details[0].message });
-  }
+  let id = req.params.id;
+  let { user_name, email, role, permissions } = req.body;
+  let userChecking = await User.findById(id);
 
-  let { user_name, email, password } = req.body;
-  let userChecking = await User.findByIdAndDelete(req.params.id);
   if (!userChecking) {
     return res.status(404).json({ error: "User not found" });
   }
+
   let user = await User.findByIdAndUpdate(
-    req.params.id,
+    id,
     {
       user_name,
       email,
-      password,
+      role,
+      permissions,
     },
     {
       new: true,
     }
   );
-  return res.status(200).json(user);
+  let isInValidUser = req.user._id === id;
+    
+  return res
+    .status(200)
+    .json({ message: "success", isInValidUser: isInValidUser ? true : false });
 };
 
 const deleteUser = async (req, res) => {
-  let userIdList = req.body.userIdList;
-  let isValidUser = userIdList.find((id) => id === req.user._id);
-
-  userIdList.forEach(async (userId) => {
-    let user = await User.findByIdAndDelete(userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-  });
+  let id = req.params.id;
+  let isInValidUser = req.user._id === id;
+  let user = await User.findByIdAndDelete(id);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
   return res
     .status(200)
-    .json({ message: "success", isValidUser: isValidUser ? true : false });
+    .json({ message: "success", isInValidUser: isInValidUser ? true : false });
 };
 
 exports.getUserList = getUserList;

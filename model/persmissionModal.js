@@ -6,12 +6,6 @@ const permissionSchema = new Schema({
   permission_name: {
     type: String,
   },
-  roles: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Role",
-    },
-  ],
 });
 
 const Permission = mongoose.model("Permission", permissionSchema);

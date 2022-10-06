@@ -35,7 +35,7 @@ const {
 
 const router = express.Router();
 
-router.get("/", getCollectionList);
+router.get("/list", getCollectionList);
 router.get("/:id", getCollectionById);
 router.post("/", upload.single("img"), createCollection);
 router.put("/:id", updateCollection);

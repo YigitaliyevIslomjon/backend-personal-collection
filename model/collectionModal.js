@@ -3,19 +3,25 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const collectionSchema = new Schema({
-  title: {
+  collection_name: {
     type: String,
   },
   description: {
     type: String,
   },
-  topic: {
-    type: String,
+  mark_down: {
+    type: Boolean,
+    default: false,
+  },
+  topic_id: {
+    type: Schema.Types.ObjectId,
+    ref: "Topic",
   },
   user_id: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+
   path: { type: String },
 });
 
@@ -23,11 +29,11 @@ const Collection = mongoose.model("Collection", collectionSchema);
 
 const validateCollection = (data) => {
   let collectionSechema = Joi.object({
-    title: Joi.string().required(),
-    description: Joi.string().required(),
-    topic: Joi.string().required(),
-    user_id: Joi.string().required(),
-    path: Joi.string().required(),
+    collection_name: Joi.string().required(),
+    description: Joi.string().optional(),
+    mark_down: Joi.string().optional(),
+    topic_id: Joi.string().required(),
+    img: Joi.binary().required(),
   });
   return collectionSechema.validate(data);
 };

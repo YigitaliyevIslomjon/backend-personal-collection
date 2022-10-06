@@ -17,7 +17,7 @@ router.use(authenticateToken);
 router.post("/login/admin", loginUserAdmin);
 router.get("/", getUserList);
 router.get("/:id", getUserById);
-router.put("/", updateUser);
-router.delete("/", deleteUser);
+router.put("/:id", updateUser);
+router.delete("/:id", deleteUser);
 
 module.exports = router;

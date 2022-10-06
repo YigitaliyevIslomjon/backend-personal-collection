@@ -12,21 +12,30 @@ const userSignUpSchema = new Schema({
   },
 
   email: { type: String, required: true, unique: true },
+
   password: {
     type: String,
     required: true,
   },
-  role_id: {
+
+  role: {
     type: String,
-    required: true,
+    enum: ["user", "admin"],
+    default: "user",
   },
-  status: { type: Boolean, required: false, default: false },
-  sign_in_at: {
+
+  permissions: {
+    type: Array,
+    default: [{ block: true }, { view: true }],
+  },
+
+  created_at: {
     type: Date,
     required: false,
     default: new Date(),
   },
-  sign_up_at: { type: Date, required: false, default: new Date() },
+
+  updated_at: { type: Date, required: false, default: new Date() },
 });
 
 userSignUpSchema.methods.generateAccessToken = function () {
@@ -41,13 +50,13 @@ function validateUserSignUp(data) {
     user_name: Joi.string().required(),
     email: Joi.string().email({ tlds: { allow: false } }),
     password: Joi.string().required(),
-    status: Joi.boolean().optional(),
-    sign_in_at: Joi.date().format("DD-MM-YYYY HH:MM:ss").optional(),
-    sign_up_at: Joi.date().format("DD-MM-YYYY HH:MM:ss").optional(),
+    updated_at: Joi.date().format("DD-MM-YYYY HH:MM:ss").optional(),
+    created_at: Joi.date().format("DD-MM-YYYY HH:MM:ss").optional(),
   });
 
   return userSignUpSchema.validate(data);
 }
+
 
 module.exports = {
   validateUserSignUp,

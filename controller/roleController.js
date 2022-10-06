@@ -7,12 +7,13 @@ const getRoleList = async (req, res) => {
 };
 
 const createRole = async (req, res) => {
+  console.log(req.body);
   const { role_name, permissions } = req.body;
   const thereIs = await Role.findOne({ role_name: role_name });
   if (thereIs) {
-    return res.status(200).json("bu ma'lumot mavjud");
+    return res.status(200).json({ error: "bu ma'lumot mavjud" });
   }
-  const natija = new Role({ role_name, permissions: permissions });
+  const natija = new Role({ role_name, permissions });
   const result = await natija.save();
   return res.status(200).json({ data: result });
 };

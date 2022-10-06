@@ -1,4 +1,4 @@
-const { Collection } = require("../model/collectionModal");
+const { Collection, validateCollection } = require("../model/collectionModal");
 const { ItemExtraField } = require("../model/itemExtraFieldModal");
 const { Item } = require("../model/itemModal");
 
@@ -21,13 +21,18 @@ const getCollectionById = async (req, res) => {
 };
 
 const createCollection = async (req, res) => {
-  const { title, description, topic, user_id } = req.body;
-  console.log(req.file);
+  let { error } = validateCollection(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+  const { collection_name, description, topic_id, mark_down } = req.body;
+
   const collection = new Collection({
-    title,
+    collection_name,
     description,
-    topic,
-    user_id,
+    topic_id,
+    user_id: req.user._id,
+    mark_down,
     path: req.file.filename,
   });
   const result = await collection.save();
@@ -35,7 +40,7 @@ const createCollection = async (req, res) => {
 };
 
 const updateCollection = async (req, res) => {
-  const { name, description, topic, user_id, img } = req.body;
+  const { collection_name, description, topic, user_id, img } = req.body;
 
   const result = await Collection.findById(req.params.id);
   if (!result) {
@@ -44,7 +49,7 @@ const updateCollection = async (req, res) => {
   const updatecollection = await Collection.findByIdAndUpdate(
     req.params.id,
     {
-      name,
+      collection_name,
       description,
       topic,
       user_id,
