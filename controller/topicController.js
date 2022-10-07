@@ -2,7 +2,7 @@ const { Topic, validateTopic } = require("../model/topicModal");
 
 const getTopicList = async (req, res) => {
   let topic = await Topic.find({});
-  console.log(topic);
+
   return res.status(200).json(topic);
 };
 

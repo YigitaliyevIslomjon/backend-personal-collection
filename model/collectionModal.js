@@ -22,7 +22,7 @@ const collectionSchema = new Schema({
     ref: "User",
   },
 
-  path: { type: String },
+  path: { type: String, required: true },
 });
 
 const Collection = mongoose.model("Collection", collectionSchema);
@@ -33,7 +33,6 @@ const validateCollection = (data) => {
     description: Joi.string().optional(),
     mark_down: Joi.string().optional(),
     topic_id: Joi.string().required(),
-    img: Joi.binary().required(),
   });
   return collectionSechema.validate(data);
 };

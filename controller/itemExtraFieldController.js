@@ -1,13 +1,26 @@
-const { ItemExtraField } = require("../model/itemExtraFieldModal");
+const { object } = require("joi");
+const {
+  ItemExtraField,
+  validateItemExtraField,
+} = require("../model/itemExtraFieldModal");
 
 require("express-async-errors");
 
-const getItemExtraFieldList = async (req, res) => {
-  const itemExtraField = await ItemExtraField.find({}).populate("collection");
+const getItemExtraFieldById = async (req, res) => {
+  const itemExtraField = await ItemExtraField.findOne({
+    collection_id: req.params.collection_id,
+  }).select("-collection_id -__v -_id");
+  if (!itemExtraField) {
+    return res.status(404).send({ error: "id  not found" });
+  }
   return res.status(200).json(itemExtraField);
 };
 
 const createItemExtraField = async (req, res) => {
+  let { error } = validateItemExtraField(req.body);
+  if (!error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
   const {
     int_field,
     str_field,
@@ -16,34 +29,25 @@ const createItemExtraField = async (req, res) => {
     date_filed,
     collection_id,
   } = req.body;
-  let checking = await ItemExtraField.findOne({ collection_id });
-  if (checking) {
-    let result = await ItemExtraField.findOneAndUpdate(
-      { collection_id },
-      {
-        int_field,
-        str_field,
-        textare_filed,
-        checkbox_field,
-        date_filed,
-        collection_id,
-      },
-      {
-        new: true,
-      }
-    );
-    return res.status(200).json(result);
-  }
-  const itemExtraField = new ItemExtraField({
-    int_field,
-    str_field,
-    textare_filed,
-    checkbox_field,
-    date_filed,
-    collection_id,
-  });
-  const result = await itemExtraField.save();
-  return res.status(200).json({ data: result });
+
+  var query = {},
+    update = { expire: new Date() },
+    options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
+  const itemExtraField = await ItemExtraField.findOneAndUpdate(
+    { collection_id: req.params.collection_id },
+    {
+      int_field,
+      str_field,
+      textare_filed,
+      checkbox_field,
+      date_filed,
+      collection_id,
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
+
+  return res.status(200).json(itemExtraField);
 };
 
 const updateItemExtraField = async (req, res) => {
@@ -87,7 +91,7 @@ const deleteItemExtraField = async (req, res) => {
 };
 
 module.exports = {
-  getItemExtraFieldList,
+  getItemExtraFieldById,
   createItemExtraField,
   updateItemExtraField,
   deleteItemExtraField,

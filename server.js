@@ -7,7 +7,7 @@ const cors = require("cors");
 dotenv.config();
 
 const app = express();
-console.log("salom");
+
 mongoose
   .connect(process.env.MONGODB_URI_local, {
     useNewUrlParser: true,
@@ -20,9 +20,11 @@ mongoose
     console.log("error connecting", err);
   });
 
+// app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors());
 
+app.use(cors());
+app.use(express.static(__dirname + "/public"));
 app.use("/api", indexRoute);
 app.use(errorHandler);
 

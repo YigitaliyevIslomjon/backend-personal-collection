@@ -12,6 +12,7 @@
     "@hapi/joi-date": "^2.0.1",
     "@joi/date": "^2.1.0",
     "bcrypt": "^5.0.1",
+    "cloudinary": "^1.32.0",
     "cors": "^2.8.5",
     "dateformat": "^5.0.3",
     "dotenv": "^16.0.2",
@@ -22,6 +23,7 @@
     "moment": "^2.29.4",
     "mongoose": "^6.6.1",
     "multer": "^1.4.5-lts.1",
+    "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^2.0.20"
   },
   "engines": {
