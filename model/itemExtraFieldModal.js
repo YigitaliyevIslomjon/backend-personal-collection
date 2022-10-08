@@ -32,6 +32,13 @@ const itemExtraFieldSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Collection",
   },
+  created_at: {
+    type: Date,
+    required: false,
+    default: new Date(),
+  },
+
+  updated_at: { type: Date, required: false, default: new Date() },
 });
 
 const ItemExtraField = mongoose.model("ItemExtraField", itemExtraFieldSchema);

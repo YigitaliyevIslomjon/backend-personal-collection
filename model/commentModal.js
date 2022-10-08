@@ -10,6 +10,17 @@ const commentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Item",
   },
+  user_id: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
+  created_at: {
+    type: Date,
+    required: false,
+    default: new Date(),
+  },
+
+  updated_at: { type: Date, required: false, default: new Date() },
 });
 
 const Comment = mongoose.model("Comment", commentSchema);

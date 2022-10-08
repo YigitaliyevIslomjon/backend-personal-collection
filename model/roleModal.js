@@ -6,6 +6,13 @@ const roleSchema = new Schema({
   role_name: {
     type: String,
   },
+  created_at: {
+    type: Date,
+    required: false,
+    default: new Date(),
+  },
+
+  updated_at: { type: Date, required: false, default: new Date() },
 });
 
 const Role = mongoose.model("Role", roleSchema);

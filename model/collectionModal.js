@@ -23,6 +23,13 @@ const collectionSchema = new Schema({
   },
 
   path: { type: String, required: true },
+  created_at: {
+    type: Date,
+    required: false,
+    default: new Date(),
+  },
+
+  updated_at: { type: Date, required: false, default: new Date() },
 });
 
 const Collection = mongoose.model("Collection", collectionSchema);

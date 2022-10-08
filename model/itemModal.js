@@ -20,11 +20,19 @@ const itemSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  path: { type: String, required: false },
   int_field: [],
   str_field: [],
   textare_field: [],
   checkbox_field: [],
   date_field: [],
+  created_at: {
+    type: Date,
+    required: false,
+    default: new Date(),
+  },
+
+  updated_at: { type: Date, required: false, default: new Date() },
 });
 
 const Item = mongoose.model("Item", itemSchema);
@@ -32,14 +40,15 @@ const Item = mongoose.model("Item", itemSchema);
 const validateItem = (data) => {
   const itemSchema = Joi.object({
     item_name: Joi.string().required(),
-    tags: Joi.array().required(),
     collection_id: Joi.string().required(),
-    user_id: Joi.string().required(),
-    int_field: Joi.array().required(),
-    str_field: Joi.array().required(),
-    textare_field: Joi.array().required(),
-    checkbox_field: Joi.array().required(),
-    date_field: Joi.array().required(),
+    tags: Joi.array().optional(),
+    int_field: Joi.array().optional(),
+    str_field: Joi.array().optional(),
+    textare_field: Joi.array().optional(),
+    checkbox_field: Joi.array().optional(),
+    date_field: Joi.array().optional(),
+    path: Joi.string().optional(),
+    img: Joi.optional(),
   });
   return itemSchema.validate(data);
 };

@@ -6,6 +6,13 @@ const permissionSchema = new Schema({
   permission_name: {
     type: String,
   },
+  created_at: {
+    type: Date,
+    required: false,
+    default: new Date(),
+  },
+
+  updated_at: { type: Date, required: false, default: new Date() },
 });
 
 const Permission = mongoose.model("Permission", permissionSchema);

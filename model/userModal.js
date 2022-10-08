@@ -57,7 +57,6 @@ function validateUserSignUp(data) {
   return userSignUpSchema.validate(data);
 }
 
-
 module.exports = {
   validateUserSignUp,
   User,

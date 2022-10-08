@@ -7,6 +7,13 @@ const tagSchema = new Schema({
     type: String,
     unique: true,
   },
+  created_at: {
+    type: Date,
+    required: false,
+    default: new Date(),
+  },
+
+  updated_at: { type: Date, required: false, default: new Date() },
 });
 
 const Tag = mongoose.model("Tag", tagSchema);

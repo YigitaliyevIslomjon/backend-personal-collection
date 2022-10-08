@@ -7,10 +7,16 @@ const topicSchema = new Schema({
     type: String,
     unique: true,
   },
+  created_at: {
+    type: Date,
+    required: false,
+    default: new Date(),
+  },
+
+  updated_at: { type: Date, required: false, default: new Date() },
 });
 
 const Topic = mongoose.model("Topic", topicSchema);
-
 const validateTopic = (data) => {
   const tagSchema = Joi.object({
     topic_name: Joi.string().required(),

@@ -5,8 +5,8 @@ const { Schema } = mongoose;
 const likeSchema = new Schema({
   like_status: {
     type: String,
-    enum: [1, 0],
-    default: 0,
+    enum: ["1", "0"],
+    default: "0",
   },
   user_id: {
     type: Schema.Types.ObjectId,
@@ -16,6 +16,13 @@ const likeSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Item",
   },
+  created_at: {
+    type: Date,
+    required: false,
+    default: new Date(),
+  },
+
+  updated_at: { type: Date, required: false, default: new Date() },
 });
 
 const Like = mongoose.model("Like", likeSchema);
@@ -23,8 +30,6 @@ const Like = mongoose.model("Like", likeSchema);
 const validateLike = (data) => {
   const likeSchema = Joi.object({
     like_status: Joi.boolean().required(),
-    user_id: Joi.string().required(),
-    item_id: Joi.string().required(),
   });
   return likeSchema.validate(data);
 };

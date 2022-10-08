@@ -8,7 +8,7 @@ const getCommentList = async (req, res) => {
 
 const createComment = async (req, res) => {
   const { text, item_id } = req.body;
-  const Comment = new Comment({
+  const comment = new Comment({
     text,
     item_id,
   });

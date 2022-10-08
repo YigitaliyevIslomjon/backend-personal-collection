@@ -1,11 +1,8 @@
 const express = require("express");
-const { getTagList, createTag } = require("../controller/tagController");
+const { getTagList } = require("../controller/tagController");
 
 const router = express.Router();
 
-router.get("/", getTagList);
-router.post("/", createTag);
-router.put("/");
-router.delete("/");
+router.get("/list", getTagList);
 
 module.exports = router;
