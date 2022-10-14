@@ -1,4 +1,5 @@
 const { Collection, validateCollection } = require("../model/collectionModal");
+const { Item } = require("../model/itemModal");
 require("express-async-errors");
 
 const getCollectionList = async (req, res) => {
@@ -17,6 +18,14 @@ const getCollectionById = async (req, res) => {
   }
 
   return res.status(200).json(collection);
+};
+
+const getItemByCollectionId = async (req, res) => {
+  let { collection_id } = req.query;
+  const item = await Item.find({ collection_id: collection_id }).populate(
+    "user_id collection_id tags"
+  );
+  return res.status(200).json(item);
 };
 
 const createCollection = async (req, res) => {
@@ -70,10 +79,67 @@ const deleteCollection = async (req, res) => {
   return res.status(200).json({ message: "success" });
 };
 
+const getlargerCollection = async (req, res) => {
+  let items = await Item.find(
+    {},
+    {
+      collection_id: 1,
+      _id: 0,
+    }
+  );
+
+  let collectionIdList = items.map((item) => item.collection_id.toString());
+  let collectionSetIdList = new Set(collectionIdList);
+
+  let commonColletionList = [];
+
+  collectionSetIdList.forEach((item) => {
+    let count = 0;
+    collectionIdList.forEach((child) => {
+      if (item === child) {
+        count++;
+      }
+    });
+    commonColletionList.push({
+      count: count,
+      collection_id: item,
+    });
+    count = 0;
+  });
+  commonColletionList = commonColletionList
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+
+  let commonColletionListCopy = commonColletionList;
+  let largeCollectionIdList = commonColletionList.map(
+    (item) => item.collection_id
+  );
+
+  let collection = await Collection.find()
+    .lean()
+    .populate("user_id topic_id")
+    .where("_id")
+    .in(largeCollectionIdList);
+
+  collection = collection.map((item) => {
+    commonColletionListCopy.forEach((child) => {
+      if (String(item._id) === child.collection_id) {
+        item = { ...item, item_count: child.count };
+      }
+    });
+
+    return item;
+  });
+
+  return res.status(200).json(collection);
+};
+
 module.exports = {
+  getlargerCollection,
   getCollectionList,
   getCollectionById,
   createCollection,
   updateCollection,
   deleteCollection,
+  getItemByCollectionId,
 };

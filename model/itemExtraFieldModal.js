@@ -31,6 +31,7 @@ const itemExtraFieldSchema = new Schema({
   collection_id: {
     type: Schema.Types.ObjectId,
     ref: "Collection",
+    required: true,
   },
   created_at: {
     type: Date,

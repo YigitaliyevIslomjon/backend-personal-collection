@@ -11,10 +11,12 @@ const likeSchema = new Schema({
   user_id: {
     type: Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
   item_id: {
     type: Schema.Types.ObjectId,
     ref: "Item",
+    required: true,
   },
   created_at: {
     type: Date,

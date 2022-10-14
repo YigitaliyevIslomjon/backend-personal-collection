@@ -2,19 +2,24 @@ const { Comment } = require("../model/commentModal");
 require("express-async-errors");
 
 const getCommentList = async (req, res) => {
-  const Comment = await Comment.find({}).populate("item_id");
+  const Comment = await Comment.find({}).populate("user_id -__v -password");
   return res.status(200).json(Comment);
 };
 
 const createComment = async (req, res) => {
-  const { text, item_id } = req.body;
-  const comment = new Comment({
+  let { text, item_id } = req.body;
+  let comment = await new Comment({
     text,
     item_id,
+    user_id: req.user._id,
   });
 
-  const result = await Comment.save();
-  res.status(200).json({ data: result });
+  comment = await comment.populate("user_id");
+  comment = await comment.save();
+  let io = req.app.locals.io;
+  io.sockets.emit("send-comment", comment);
+
+  res.status(200).json(comment);
 };
 
 const updateComment = async (req, res) => {

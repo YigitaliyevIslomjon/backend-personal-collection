@@ -3,7 +3,10 @@ const mongoose = require("mongoose");
 const indexRoute = require("./routes/index");
 const errorHandler = require("./middleware/errorHandler");
 const dotenv = require("dotenv");
+const http = require("http");
+const socketIO = require("socket.io");
 const cors = require("cors");
+const { soketFunction } = require("./controller/commentController");
 dotenv.config();
 
 const app = express();
@@ -11,7 +14,6 @@ const app = express();
 mongoose
   .connect(process.env.MONGODB_URI_local, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
   })
   .then((res) => {
     console.log("mongodb is connected");
@@ -20,15 +22,31 @@ mongoose
     console.log("error connecting", err);
   });
 
-// app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+const server = http.createServer(app);
+const io = socketIO(server, {
+  transports: ["polling"],
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
+});
 
+io.on("connection", (socket) => {
+  socket.off("disconnect", () => {
+    socket.close();
+  });
+});
+
+app.locals.io = io;
+exports = module.exports = app;
+
+app.use(express.json());
 app.use(cors());
 app.use(express.static(__dirname + "/public"));
 app.use("/api", indexRoute);
 app.use(errorHandler);
 
 const PORT = 4000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Started up at prot ${PORT}`);
 });

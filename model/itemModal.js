@@ -5,20 +5,25 @@ const { Schema } = mongoose;
 const itemSchema = new Schema({
   item_name: {
     type: String,
+    required: true,
   },
+
   tags: [
     {
       type: Schema.Types.ObjectId,
       ref: "Tag",
+      required: true,
     },
   ],
   collection_id: {
     type: Schema.Types.ObjectId,
     ref: "Collection",
+    required: true,
   },
   user_id: {
     type: Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
   path: { type: String, required: false },
   int_field: [],
@@ -34,6 +39,8 @@ const itemSchema = new Schema({
 
   updated_at: { type: Date, required: false, default: new Date() },
 });
+
+itemSchema.index({ item_name: "text" });
 
 const Item = mongoose.model("Item", itemSchema);
 

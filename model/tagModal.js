@@ -6,6 +6,7 @@ const tagSchema = new Schema({
   tag_name: {
     type: String,
     unique: true,
+    required: true,
   },
   created_at: {
     type: Date,

@@ -39,7 +39,10 @@ const createLike = async (req, res) => {
     like = await like.save();
   }
 
-  let like_count = await Like.find({ like_status: "1" }).count();
+  let like_count = await Like.find({
+    item_id: item_id,
+    like_status: "1",
+  }).count();
   res.status(200).json({ count: like_count });
 };
 

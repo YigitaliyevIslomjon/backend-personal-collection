@@ -11,6 +11,7 @@ const roleRoute = require("./role");
 const tagRoute = require("./tag");
 const itemExtraFieldRoute = require("./itemExtraField");
 const topicRoute = require("./topic");
+const searchRotute = require("./search");
 
 router.use("/user", userRoute);
 router.use(authenticateToken);
@@ -23,4 +24,6 @@ router.use("/permission", permissionRoute);
 router.use("/role", roleRoute);
 router.use("/tag", tagRoute);
 router.use("/topic", topicRoute);
+router.use("/search", searchRotute);
+
 module.exports = router;

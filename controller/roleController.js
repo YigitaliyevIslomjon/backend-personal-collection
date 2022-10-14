@@ -7,7 +7,6 @@ const getRoleList = async (req, res) => {
 };
 
 const createRole = async (req, res) => {
-  console.log(req.body);
   const { role_name, permissions } = req.body;
   const thereIs = await Role.findOne({ role_name: role_name });
   if (thereIs) {

@@ -1,5 +1,5 @@
 const express = require("express");
-const { getTagList } = require("../controller/tagController");
+const { getTagList, createTag } = require("../controller/tagController");
 
 const router = express.Router();
 
