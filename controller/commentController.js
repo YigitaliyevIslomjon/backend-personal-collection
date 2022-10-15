@@ -1,9 +1,11 @@
 const { Comment } = require("../model/commentModal");
 require("express-async-errors");
 
-const getCommentList = async (req, res) => {
-  const Comment = await Comment.find({}).populate("user_id -__v -password");
-  return res.status(200).json(Comment);
+const getCommentListByItemId = async (req, res) => {
+  const comment = await Comment.find({ item_id: req.params.item_id }).populate(
+    "user_id"
+  );
+  return res.status(200).json(comment);
 };
 
 const createComment = async (req, res) => {
@@ -52,7 +54,7 @@ const deleteComment = async (req, res) => {
 };
 
 module.exports = {
-  getCommentList,
+  getCommentListByItemId,
   createComment,
   updateComment,
   deleteComment,
