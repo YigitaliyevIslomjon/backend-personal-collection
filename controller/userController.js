@@ -49,7 +49,11 @@ const loginUser = async (req, res) => {
   const { password, email } = req.body;
   const findUser = await User.findOne({ email });
   if (findUser) {
+    if (findUser.permissions[0].block) {
+      return res.status(404).json({ error: "user is blocked" });
+    }
     const validPassword = await bcrypt.compare(password, findUser.password);
+
     if (validPassword) {
       let token = await findUser.generateAccessToken();
       let user = await User.findByIdAndUpdate(
@@ -70,6 +74,10 @@ const loginUser = async (req, res) => {
 const loginUserAdmin = async (req, res) => {
   const { password, email } = req.body;
   const findUser = await User.findOne({ email });
+
+  if (findUser.permissions[0].block === true) {
+    return res.status(404).json({ error: "user is blocked" });
+  }
 
   if (findUser?.role === "admin") {
     const validPassword = await bcrypt.compare(password, findUser.password);
@@ -95,10 +103,13 @@ const loginUserAdmin = async (req, res) => {
 const updateUser = async (req, res) => {
   let id = req.params.id;
   let { user_name, email, role, permissions } = req.body;
-  let userChecking = await User.findById(id);
 
-  if (!userChecking) {
-    return res.status(404).json({ error: "User not found" });
+  let userAdminList = await User.find({ role: "admin" });
+  if (userAdminList.length < 2 && role !== "admin") {
+    return res.status(400).json({
+      error:
+        "At least one admin is required to access the admin panel, now there is only one admin left",
+    });
   }
 
   let user = await User.findByIdAndUpdate(
@@ -113,8 +124,13 @@ const updateUser = async (req, res) => {
       new: true,
     }
   );
-  let isInValidUser = req.user._id === id;
-    
+
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  let isInValidUser = req.user._id === id && user.role === "user";
+
   return res
     .status(200)
     .json({ message: "success", isInValidUser: isInValidUser ? true : false });
@@ -122,11 +138,22 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   let id = req.params.id;
-  let isInValidUser = req.user._id === id;
-  let user = await User.findByIdAndDelete(id);
+
+  let user = await User.findById(id);
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
+  let userAdminList = await User.find({ role: "admin" });
+  if (userAdminList.length < 2 && user.role === "admin") {
+    return res.status(400).json({
+      error:
+        "At least one admin is required to access the admin panel, now there is only one admin left",
+    });
+  }
+
+  let isInValidUser = req.user._id === id;
+  await User.findByIdAndDelete(id);
+
   return res
     .status(200)
     .json({ message: "success", isInValidUser: isInValidUser ? true : false });

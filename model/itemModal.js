@@ -41,8 +41,8 @@ const itemSchema = new Schema({
 });
 
 itemSchema.index({ item_name: "text" });
-
 const Item = mongoose.model("Item", itemSchema);
+
 
 const validateItem = (data) => {
   const itemSchema = Joi.object({

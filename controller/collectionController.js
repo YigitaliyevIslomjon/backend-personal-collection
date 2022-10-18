@@ -8,6 +8,12 @@ const getCollectionList = async (req, res) => {
     .select("-__v");
   return res.status(200).json(collection);
 };
+const getCollectionListByUser = async (req, res) => {
+  const collection = await Collection.find({ user_id: req.user._id })
+    .populate("user_id topic_id")
+    .select("-__v");
+  return res.status(200).json(collection);
+};
 
 const getCollectionById = async (req, res) => {
   const collection = await Collection.findById(req.params.id)
@@ -20,16 +26,19 @@ const getCollectionById = async (req, res) => {
   return res.status(200).json(collection);
 };
 
-const getItemByCollectionId = async (req, res) => {
-  let { collection_id } = req.query;
-  const item = await Item.find({ collection_id: collection_id }).populate(
-    "user_id collection_id tags"
-  );
+const getItemListByCollectionId = async (req, res) => {
+  let { collection_id, pageSize, pageNumber } = req.query;
+  const item = await Item.find({ collection_id: collection_id })
+    .populate("user_id collection_id tags")
+    .sort({
+      created_at: "asc",
+    })
+    .skip(pageSize * (pageNumber - 1))
+    .limit(pageSize);
   return res.status(200).json(item);
 };
 
 const createCollection = async (req, res) => {
-  console.log(req?.file);
   let { error } = validateCollection(req.body);
   if (error) {
     return res.status(400).json({ error: error.details[0].message });
@@ -141,5 +150,6 @@ module.exports = {
   createCollection,
   updateCollection,
   deleteCollection,
-  getItemByCollectionId,
+  getItemListByCollectionId,
+  getCollectionListByUser,
 };
