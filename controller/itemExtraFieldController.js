@@ -1,4 +1,3 @@
-const { object } = require("joi");
 const {
   ItemExtraField,
   validateItemExtraField,
@@ -21,23 +20,24 @@ const createItemExtraField = async (req, res) => {
   if (!error) {
     return res.status(400).json({ error: error.details[0].message });
   }
+
   const {
     int_field,
     str_field,
-    textare_filed,
+    textare_field,
+    date_field,
     checkbox_field,
-    date_filed,
     collection_id,
   } = req.body;
-
+  console.log(req.body);
   const itemExtraField = await ItemExtraField.findOneAndUpdate(
     { collection_id: req.params.collection_id },
     {
       int_field,
       str_field,
-      textare_filed,
+      textare_field,
+      date_field,
       checkbox_field,
-      date_filed,
       collection_id,
     },
     { upsert: true, new: true, setDefaultsOnInsert: true }

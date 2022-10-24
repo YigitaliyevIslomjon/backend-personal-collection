@@ -18,6 +18,7 @@ const likeSchema = new Schema({
     ref: "Item",
     required: true,
   },
+  
   created_at: {
     type: Date,
     required: false,

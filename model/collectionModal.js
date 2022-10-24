@@ -1,11 +1,16 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
+const { Comment } = require("./commentModal");
+const { ItemExtraField } = require("./itemExtraFieldModal");
+const { Item } = require("./itemModal");
+const { Like } = require("./likeModal");
 const { Schema } = mongoose;
 
 const collectionSchema = new Schema({
   collection_name: {
     type: String,
     required: true,
+    unique: true,
   },
   description: {
     type: String,
@@ -37,6 +42,26 @@ const collectionSchema = new Schema({
 });
 
 collectionSchema.index({ collection_name: "text" });
+
+// delete items when collection is deleted
+collectionSchema.pre("remove", async function (next) {
+  const collection = this;
+  await ItemExtraField.deleteMany({ collection_id: collection._id });
+
+  // delte item and comment realted to items
+  let itemList = await Item.find({ collection_id: collection._id })
+    .select("_id")
+    .lean();
+  let itemIdList = itemList.map((item) => String(item._id));
+  itemIdList.forEach(async (itemId) => {
+    await Comment.findOneAndDelete({ item_id: itemId });
+    await Like.findOneAndDelete({ item_id: itemId });
+  });
+
+  await Item.deleteMany({ collection_id: collection._id });
+
+  next();
+});
 
 const Collection = mongoose.model("Collection", collectionSchema);
 

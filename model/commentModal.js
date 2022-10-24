@@ -7,6 +7,7 @@ const commentSchema = new Schema({
     type: String,
     required: true,
   },
+  
   item_id: {
     type: Schema.Types.ObjectId,
     ref: "Item",
@@ -17,6 +18,7 @@ const commentSchema = new Schema({
     ref: "User",
     required: true,
   },
+
   created_at: {
     type: Date,
     required: false,

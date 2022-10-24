@@ -1,18 +1,64 @@
 const { Collection, validateCollection } = require("../model/collectionModal");
+const { ItemExtraField } = require("../model/itemExtraFieldModal");
 const { Item } = require("../model/itemModal");
 require("express-async-errors");
 
 const getCollectionList = async (req, res) => {
-  const collection = await Collection.find({})
-    .populate("user_id topic_id")
-    .select("-__v");
-  return res.status(200).json(collection);
+  let { pageNumber, pageSize } = req.query;
+  let collection;
+  if (pageNumber && pageSize) {
+    let total_page_count =
+      parseInt((await Collection.find().count()) / pageSize) + 1;
+    collection = await Collection.find({})
+      .sort({
+        created_at: "desc",
+      })
+      .skip(pageSize * (pageNumber - 1))
+      .limit(pageSize)
+      .populate("user_id topic_id")
+      .select("-__v")
+      .lean();
+    return res.status(200).json({
+      collection,
+      pagenation: {
+        pageNumber: +pageNumber,
+        pageSize: +pageSize,
+        total_page_count,
+      },
+    });
+  } else {
+    collection = await Collection.find({})
+      .lean()
+      .sort({
+        created_at: "desc",
+      })
+      .populate("user_id topic_id")
+      .select("-__v");
+    return res.status(200).json(collection);
+  }
 };
+
 const getCollectionListByUser = async (req, res) => {
+  let { pageNumber, pageSize } = req.query;
+  let total_page_count =
+    parseInt((await Collection.find().count()) / pageSize) + 1;
   const collection = await Collection.find({ user_id: req.user._id })
+    .sort({
+      created_at: "desc",
+    })
+    .skip(pageSize * (pageNumber - 1))
+    .limit(pageSize)
     .populate("user_id topic_id")
     .select("-__v");
-  return res.status(200).json(collection);
+
+  return res.status(200).json({
+    collection,
+    pagenation: {
+      pageNumber: +pageNumber,
+      pageSize: +pageSize,
+      total_page_count,
+    },
+  });
 };
 
 const getCollectionById = async (req, res) => {
@@ -28,6 +74,10 @@ const getCollectionById = async (req, res) => {
 
 const getItemListByCollectionId = async (req, res) => {
   let { collection_id, pageSize, pageNumber } = req.query;
+  let total_page_count =
+    parseInt(
+      (await Item.find({ collection_id: collection_id }).count()) / pageSize
+    ) + 1;
   const item = await Item.find({ collection_id: collection_id })
     .populate("user_id collection_id tags")
     .sort({
@@ -35,7 +85,14 @@ const getItemListByCollectionId = async (req, res) => {
     })
     .skip(pageSize * (pageNumber - 1))
     .limit(pageSize);
-  return res.status(200).json(item);
+  return res.status(200).json({
+    item,
+    pagenation: {
+      pageNumber: +pageNumber,
+      pageSize: +pageSize,
+      total_page_count,
+    },
+  });
 };
 
 const createCollection = async (req, res) => {
@@ -44,7 +101,7 @@ const createCollection = async (req, res) => {
     return res.status(400).json({ error: error.details[0].message });
   }
   const { collection_name, description, topic_id, mark_down } = req.body;
-  const collection = new Collection({
+  let collection = new Collection({
     collection_name,
     description,
     topic_id,
@@ -52,8 +109,21 @@ const createCollection = async (req, res) => {
     mark_down,
     path: req?.file?.path,
   });
-  const result = await collection.save();
-  res.status(200).json({ data: result });
+
+  collection = await collection.save();
+
+  let item_extra_field = await new ItemExtraField({
+    int_field: [],
+    str_field: [],
+    checkbox_field: [],
+    textare_field: [],
+    date_field: [],
+    collection_id: collection._id,
+  });
+
+  await item_extra_field.save();
+
+  res.status(200).json({ message: "success" });
 };
 
 const updateCollection = async (req, res) => {
@@ -81,10 +151,11 @@ const updateCollection = async (req, res) => {
 
 const deleteCollection = async (req, res) => {
   let id = req.params.id;
-  const result = await Collection.findByIdAndDelete(id);
-  if (!result) {
-    return res.status(200).json({ error: "id not found" });
+  const collection = await Collection.findByIdAndDelete(id);
+  if (!collection) {
+    return res.status(404).json({ error: "id not found" });
   }
+  collection.remove();
   return res.status(200).json({ message: "success" });
 };
 
@@ -115,9 +186,8 @@ const getlargerCollection = async (req, res) => {
     });
     count = 0;
   });
-  commonColletionList = commonColletionList
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
+
+  commonColletionList = commonColletionList.sort((a, b) => b.count - a.count);
 
   let commonColletionListCopy = commonColletionList;
   let largeCollectionIdList = commonColletionList.map(
@@ -125,10 +195,10 @@ const getlargerCollection = async (req, res) => {
   );
 
   let collection = await Collection.find()
-    .lean()
-    .populate("user_id topic_id")
     .where("_id")
-    .in(largeCollectionIdList);
+    .in(largeCollectionIdList)
+    .lean()
+    .populate("user_id topic_id");
 
   collection = collection.map((item) => {
     commonColletionListCopy.forEach((child) => {
@@ -136,10 +206,11 @@ const getlargerCollection = async (req, res) => {
         item = { ...item, item_count: child.count };
       }
     });
-
     return item;
   });
-
+  collection = collection
+    .sort((a, b) => b.item_count - a.item_count)
+    .slice(0, 5);
   return res.status(200).json(collection);
 };
 

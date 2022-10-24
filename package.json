@@ -40,5 +40,8 @@
     "url": "https://github.com/YigitaliyevIslomjon/backend/issues"
   },
   "homepage": "https://github.com/YigitaliyevIslomjon/backend#readme",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "@types/react-csv": "^1.1.3"
+  }
 }

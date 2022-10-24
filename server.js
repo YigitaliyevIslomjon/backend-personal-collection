@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 
-mongoose
+mongoose  
   .connect(process.env.MONGODB_URI_local, {
     useNewUrlParser: true,
   })

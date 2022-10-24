@@ -1,5 +1,7 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
+const { Comment } = require("./commentModal");
+const { Like } = require("./likeModal");
 const { Schema } = mongoose;
 
 const itemSchema = new Schema({
@@ -41,8 +43,16 @@ const itemSchema = new Schema({
 });
 
 itemSchema.index({ item_name: "text" });
-const Item = mongoose.model("Item", itemSchema);
 
+// delete comment when item is deleted
+itemSchema.pre("remove", async function (next) {
+  const item = this;
+  await Comment.deleteMany({ item_id: item._id });
+  await Like.deleteMany({ item_id: item._id });
+  next();
+});
+
+const Item = mongoose.model("Item", itemSchema);
 
 const validateItem = (data) => {
   const itemSchema = Joi.object({

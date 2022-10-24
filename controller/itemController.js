@@ -6,18 +6,28 @@ require("express-async-errors");
 
 const getItemList = async (req, res) => {
   let { pageNumber, pageSize } = req.query;
+  let total_page_count = parseInt((await Item.find().count()) / pageSize) + 1;
   const item = await Item.find({})
     .populate("user_id collection_id tags")
     .sort({
-      created_at: "asc",
+      created_at: "desc",
     })
     .skip(pageSize * (pageNumber - 1))
-    .limit(pageSize);
-  return res.status(200).json(item);
+    .limit(pageSize)
+    .lean();
+
+  return res.status(200).json({
+    item,
+    pagenation: {
+      pageNumber: +pageNumber,
+      pageSize: +pageSize,
+      total_page_count,
+    },
+  });
 };
 
 const getItemById = async (req, res) => {
-  const item_list = await Item.findOne({ _id: req.params.id })
+  const item = await Item.findOne({ _id: req.params.id })
     .select("_id tags item_name path collection_id user_id")
     .populate({
       path: "collection_id",
@@ -31,14 +41,14 @@ const getItemById = async (req, res) => {
     })
     .populate("user_id");
 
-  if (!item_list) {
+  if (!item) {
     return res.status(404).json({ error: "bunday data mavjuda emas" });
   }
   const item_extra_field = await Item.findOne({ _id: req.params.id }).select(
     "checkbox_field int_field int_field str_field textare_field date_field -_id"
   );
 
-  return res.status(200).json({ item_list, item_extra_field });
+  return res.status(200).json({ item, item_extra_field });
 };
 
 const getItemCollectionById = async (req, res) => {
@@ -152,10 +162,11 @@ const updateItem = async (req, res) => {
 
 const deleteItem = async (req, res) => {
   let id = req.params.id;
-  const result = await Item.findByIdAndDelete(id);
-  if (!result) {
+  const item = await Item.findByIdAndDelete(id);
+  if (!item) {
     return res.status(400).json({ error: "Item not found" });
   }
+  item.remove();
   return res.status(200).json("success");
 };
 

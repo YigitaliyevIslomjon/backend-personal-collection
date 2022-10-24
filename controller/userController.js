@@ -129,11 +129,7 @@ const updateUser = async (req, res) => {
     return res.status(404).json({ error: "User not found" });
   }
 
-  let isInValidUser = req.user._id === id && user.role === "user";
-
-  return res
-    .status(200)
-    .json({ message: "success", isInValidUser: isInValidUser ? true : false });
+  return res.status(200).json({ message: "success", user: user });
 };
 
 const deleteUser = async (req, res) => {
@@ -152,7 +148,8 @@ const deleteUser = async (req, res) => {
   }
 
   let isInValidUser = req.user._id === id;
-  await User.findByIdAndDelete(id);
+  user = await User.findByIdAndDelete(id);
+  user.remove();
 
   return res
     .status(200)
