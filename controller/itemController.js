@@ -32,7 +32,7 @@ const getItemById = async (req, res) => {
     .populate({
       path: "collection_id",
       model: "Collection",
-      select: { _id: 1, collection_name: 1 },
+      select: { _id: 1, collection_name: 1, user_id: 1 },
     })
     .populate({
       path: "tags",

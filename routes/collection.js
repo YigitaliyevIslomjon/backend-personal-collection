@@ -15,7 +15,6 @@ const upload = require("../utils/formParse");
 const router = express.Router();
 
 router.get("/large", getlargerCollection);
-
 router.get("/list", getCollectionList);
 router.get("/list/by-user", getCollectionListByUser);
 router.get("/items", getItemListByCollectionId);

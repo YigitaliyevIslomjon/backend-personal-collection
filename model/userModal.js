@@ -44,7 +44,10 @@ const userSignUpSchema = new Schema({
 });
 
 userSignUpSchema.methods.generateAccessToken = function () {
-  let token = jwt.sign({ _id: this._id }, process.env.SECRET_KEY_TOKEN);
+  let token = jwt.sign(
+    { _id: this._id, role: this.role },
+    process.env.SECRET_KEY_TOKEN
+  );
   return token;
 };
 

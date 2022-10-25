@@ -27,13 +27,24 @@ const getCollectionList = async (req, res) => {
       },
     });
   } else {
-    collection = await Collection.find({})
-      .lean()
-      .sort({
-        created_at: "desc",
-      })
-      .populate("user_id topic_id")
-      .select("-__v");
+    if (req.user.role === "admin") {
+      collection = await Collection.find({})
+        .lean()
+        .sort({
+          created_at: "desc",
+        })
+        .populate("user_id topic_id")
+        .select("-__v");
+    } else {
+      collection = await Collection.find({ user_id: req.user._id })
+        .lean()
+        .sort({
+          created_at: "desc",
+        })
+        .populate("user_id topic_id")
+        .select("-__v");
+    }
+
     return res.status(200).json(collection);
   }
 };
@@ -74,10 +85,10 @@ const getCollectionById = async (req, res) => {
 
 const getItemListByCollectionId = async (req, res) => {
   let { collection_id, pageSize, pageNumber } = req.query;
-  let total_page_count =
-    parseInt(
-      (await Item.find({ collection_id: collection_id }).count()) / pageSize
-    ) + 1;
+  let total_item_count = await Item.find({
+    collection_id: collection_id,
+  }).count();
+  let total_page_count = parseInt(total_item_count / pageSize) + 1;
   const item = await Item.find({ collection_id: collection_id })
     .populate("user_id collection_id tags")
     .sort({
@@ -91,6 +102,7 @@ const getItemListByCollectionId = async (req, res) => {
       pageNumber: +pageNumber,
       pageSize: +pageSize,
       total_page_count,
+      total_item_count,
     },
   });
 };

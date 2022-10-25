@@ -10,7 +10,7 @@ const getLikeList = async (req, res) => {
 
   let like_status = await Like.findOne({
     item_id: item_id,
-    user_id: req.user._id,
+    user_id: req.user?._id,
   }).select("like_status -_id");
   if (!like_status) {
     like_status = "0";
