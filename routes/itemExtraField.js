@@ -3,7 +3,7 @@ const {
   createItemExtraField,
   deleteItemExtraField,
   getItemExtraFieldById,
-} = require("../controller/ItemExtraFieldController");
+} = require("../controller/itemExtraFieldController");
 
 const router = express.Router();
 
