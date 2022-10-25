@@ -30,7 +30,7 @@ const io = socketIO(server, {
   transports: ["polling"],
   cors: {
     origin: isEnvProduction
-      ? "https://collection-personal-front.netlify.app/"
+      ? "https://collection-personal-front.netlify.app"
       : "http://localhost:3000",
     methods: ["GET", "POST"],
   },
