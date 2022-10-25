@@ -4,11 +4,23 @@ require("express-async-errors");
 
 const getUserList = async (req, res) => {
   const { pageSize, pageNumber } = req.query;
-  const user = await User.find({});
-  // .sort({ updated_at: 1 })
-  // .skip((pageNumber - 1) * pageSize)
-  // .limit(pageSize);
-  return res.status(200).json(user);
+  let total_user_count = await User.find().count();
+
+  let total_page_count = parseInt(total_user_count / pageSize) + 1;
+
+  const user = await User.find({})
+    .sort({ updated_at: 1 })
+    .skip((pageNumber - 1) * pageSize)
+    .limit(pageSize);
+  return res.status(200).json({
+    user,
+    pagenation: {
+      pageNumber: +pageNumber,
+      pageSize: +pageSize,
+      total_page_count,
+      total_user_count,
+    },
+  });
 };
 const getUserById = async (req, res) => {
   const user = await User.findById(req.params.id);
@@ -28,10 +40,12 @@ const createUser = async (req, res) => {
     return res.status(400).json({ error: error.details[0].message });
   }
 
+  // one admin should be always in database other ways. it should be created
+  let thereIsAdmin = User.findOne({ role: "admin" });
   let user = await User.create({
     user_name,
     email,
-    role: "admin",
+    role: thereIsAdmin ? "user" : "admin",
     password,
     created_at: new Date(),
     updated_at: new Date(),
