@@ -10,11 +10,14 @@ const { soketFunction } = require("./controller/commentController");
 dotenv.config();
 
 const app = express();
-
+const isEnvProduction = process.env.NODE_ENV === "production";
 mongoose
-  .connect(process.env.MONGODB_URI_local, {
-    useNewUrlParser: true,
-  })
+  .connect(
+    isEnvProduction ? process.env.MONGODB_URI : process.env.MONGODB_URI_local,
+    {
+      useNewUrlParser: true,
+    }
+  )
   .then((res) => {
     console.log("mongodb is connected");
   })
@@ -26,7 +29,9 @@ const server = http.createServer(app);
 const io = socketIO(server, {
   transports: ["polling"],
   cors: {
-    origin: "http://localhost:3000",
+    origin: isEnvProduction
+      ? "https://collection-personal-front.netlify.app/"
+      : "http://localhost:3000",
     methods: ["GET", "POST"],
   },
 });
@@ -45,6 +50,7 @@ app.use(cors());
 app.use(express.static(__dirname + "/public"));
 app.use("/api", indexRoute);
 app.use(errorHandler);
+//do something in production
 
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
