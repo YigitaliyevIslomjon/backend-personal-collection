@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 
-mongoose  
+mongoose
   .connect(process.env.MONGODB_URI_local, {
     useNewUrlParser: true,
   })
@@ -46,7 +46,7 @@ app.use(express.static(__dirname + "/public"));
 app.use("/api", indexRoute);
 app.use(errorHandler);
 
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
   console.log(`Started up at prot ${PORT}`);
 });
