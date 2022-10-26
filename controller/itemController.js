@@ -153,6 +153,7 @@ const updateItem = async (req, res) => {
       textare_field,
       checkbox_field,
       date_field,
+      path: req?.file?.path,
     },
     { new: true }
   );
