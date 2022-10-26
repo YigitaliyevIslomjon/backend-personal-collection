@@ -19,7 +19,9 @@ const createComment = async (req, res) => {
   comment = await comment.populate("user_id");
   comment = await comment.save();
   let io = req.app.locals.io;
-  io.sockets.emit("send-comment", comment);
+  setTimeout(() => {
+    io.sockets.emit("send-comment", comment);
+  }, 2000);
 
   res.status(200).json(comment);
 };
