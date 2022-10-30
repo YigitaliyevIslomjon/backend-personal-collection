@@ -27,19 +27,9 @@ const getItemList = async (req, res) => {
 };
 
 const getItemById = async (req, res) => {
-  const item = await Item.findOne({ _id: req.params.id })
-    .select("_id tags item_name path collection_id user_id")
-    .populate({
-      path: "collection_id",
-      model: "Collection",
-      select: { _id: 1, collection_name: 1, user_id: 1 },
-    })
-    .populate({
-      path: "tags",
-      model: "Tag",
-      select: { tag_name: 1, _id: 0 },
-    })
-    .populate("user_id");
+  const item = await Item.findOne({ _id: req.params.id }).populate(
+    "collection_id tags user_id"
+  );
 
   if (!item) {
     return res.status(404).json({ error: "bunday data mavjuda emas" });
@@ -53,9 +43,9 @@ const getItemById = async (req, res) => {
 
 const getItemCollectionById = async (req, res) => {
   const { collection_id } = req.query;
-  let collection = await Collection.findById(collection_id)
-    .populate("user_id topic_id")
-    .select("-__v");
+  let collection = await Collection.findById(collection_id).populate(
+    "user_id topic_id"
+  );
   if (!collection) {
     return res.status(404).json({ error: "Not Found" });
   }

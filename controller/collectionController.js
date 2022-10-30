@@ -16,7 +16,6 @@ const getCollectionList = async (req, res) => {
       .skip(pageSize * (pageNumber - 1))
       .limit(pageSize)
       .populate("user_id topic_id")
-      .select("-__v")
       .lean();
     return res.status(200).json({
       collection,
@@ -33,16 +32,14 @@ const getCollectionList = async (req, res) => {
         .sort({
           created_at: "desc",
         })
-        .populate("user_id topic_id")
-        .select("-__v");
+        .populate("user_id topic_id");
     } else {
       collection = await Collection.find({ user_id: req.user._id })
         .lean()
         .sort({
           created_at: "desc",
         })
-        .populate("user_id topic_id")
-        .select("-__v");
+        .populate("user_id topic_id");
     }
 
     return res.status(200).json(collection);
@@ -59,8 +56,7 @@ const getCollectionListByUser = async (req, res) => {
     })
     .skip(pageSize * (pageNumber - 1))
     .limit(pageSize)
-    .populate("user_id topic_id")
-    .select("-__v");
+    .populate("user_id topic_id");
 
   return res.status(200).json({
     collection,

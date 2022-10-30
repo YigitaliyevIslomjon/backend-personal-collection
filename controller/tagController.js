@@ -2,7 +2,7 @@ const { Tag, validateTag } = require("../model/tagModal");
 require("express-async-errors");
 
 const getTagList = async (req, res) => {
-  const tag = await Tag.find({}).select("tag_name").select("-__v");
+  const tag = await Tag.find({});
   return res.status(200).json(tag);
 };
 

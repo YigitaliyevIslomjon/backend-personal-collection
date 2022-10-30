@@ -9,9 +9,11 @@ const getUserList = async (req, res) => {
   let total_page_count = parseInt(total_user_count / pageSize) + 1;
 
   const user = await User.find({})
+    .select("-password")
     .sort({ updated_at: 1 })
     .skip((pageNumber - 1) * pageSize)
     .limit(pageSize);
+
   return res.status(200).json({
     user,
     pagenation: {
@@ -119,7 +121,11 @@ const updateUser = async (req, res) => {
   let { user_name, email, role, permissions } = req.body;
 
   let userAdminList = await User.find({ role: "admin" });
-  if (userAdminList.length < 2 && role !== "admin") {
+  if (
+    userAdminList.length < 2 &&
+    userAdminList[0]._id === id &&
+    role !== "admin"
+  ) {
     return res.status(400).json({
       error:
         "At least one admin is required to access the admin panel, now there is only one admin left",
@@ -143,7 +149,15 @@ const updateUser = async (req, res) => {
     return res.status(404).json({ error: "User not found" });
   }
 
-  return res.status(200).json({ message: "success", user: user });
+  let isInValidUser = req.user._id === id && user.role === "user";
+
+  return res
+    .status(200)
+    .json({
+      message: "success",
+      user,
+      isInValidUser: isInValidUser ? true : false,
+    });
 };
 
 const deleteUser = async (req, res) => {

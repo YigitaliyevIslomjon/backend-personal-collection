@@ -6,7 +6,6 @@ const dotenv = require("dotenv");
 const http = require("http");
 const socketIO = require("socket.io");
 const cors = require("cors");
-const { soketFunction } = require("./controller/commentController");
 dotenv.config();
 
 const app = express();
@@ -50,7 +49,6 @@ app.use(cors());
 app.use(express.static(__dirname + "/public"));
 app.use("/api", indexRoute);
 app.use(errorHandler);
-//do something in production
 
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
