@@ -32,6 +32,7 @@ const io = socketIO(server, {
       ? "https://collection-personal-front.netlify.app"
       : "http://localhost:3000",
     methods: ["GET", "POST"],
+    credential: true,
   },
 });
 
@@ -49,6 +50,7 @@ app.use(cors());
 app.use(express.static(__dirname + "/public"));
 app.use("/api", indexRoute);
 app.use(errorHandler);
+//do something in production
 
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {

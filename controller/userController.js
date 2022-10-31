@@ -151,13 +151,11 @@ const updateUser = async (req, res) => {
 
   let isInValidUser = req.user._id === id && user.role === "user";
 
-  return res
-    .status(200)
-    .json({
-      message: "success",
-      user,
-      isInValidUser: isInValidUser ? true : false,
-    });
+  return res.status(200).json({
+    message: "success",
+    user,
+    isInValidUser: isInValidUser ? true : false,
+  });
 };
 
 const deleteUser = async (req, res) => {
@@ -184,7 +182,29 @@ const deleteUser = async (req, res) => {
     .json({ message: "success", isInValidUser: isInValidUser ? true : false });
 };
 
+const socailMediaLogin = async (req, res) => {
+  const { email, user_name } = req.body;
+  let user = await User.findOne({ email: email }).select("-password");
+  if (user) {
+    let token = user.generateAccessToken();
+    return res.status(200).json({ user, token });
+  } else {
+    let user = new User({
+      user_name,
+      email,
+      role: "user",
+      password: Math.random() * 1000000,
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
+    user = await user.save();
+    let token = user.generateAccessToken();
+    return res.status(200).json({ user, token });
+  }
+};
+
 exports.getUserList = getUserList;
+exports.socailMediaLogin = socailMediaLogin;
 exports.createUser = createUser;
 exports.updateUser = updateUser;
 exports.getUserById = getUserById;

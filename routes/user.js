@@ -7,11 +7,13 @@ const {
   getUserById,
   loginUser,
   loginUserAdmin,
+  socailMediaLogin,
 } = require("../controller/userController");
 const router = express.Router();
 const authenticateToken = require("../middleware/auth");
 
 router.post("/login", loginUser);
+router.post("/socil/login", socailMediaLogin);
 router.post("/sign-up", createUser);
 router.use(authenticateToken);
 router.post("/login/admin", loginUserAdmin);
