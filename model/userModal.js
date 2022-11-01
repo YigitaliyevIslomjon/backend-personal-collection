@@ -60,7 +60,7 @@ userSignUpSchema.pre("remove", async function (next) {
     await ItemExtraField.findOneAndDelete({ collection_id: collectionId });
   });
 
-  await Collection.deleteMany({ user_id: user._id });
+  let collection = await Collection.deleteMany({ user_id: user._id });
 
   let itemList = await Item.find({ user_id: user._id }).select("_id");
   let itemIdList = itemList.map((item) => String(item._id));

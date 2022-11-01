@@ -10,9 +10,10 @@ const searchTargetValue = async (req, res) => {
       "item_id user_id"
     );
 
-    let collection = await Collection.find({ $text: { $search: search } })
-      .populate("user_id topic_id")
-      .select("-__v");
+    let collection = await Collection.find({
+      $text: { $search: search },
+    }).populate("user_id topic_id");
+
     let item = await Item.find({ $text: { $search: search } }).populate(
       "user_id collection_id tags"
     );
@@ -21,9 +22,7 @@ const searchTargetValue = async (req, res) => {
     let collection = await Collection.find({
       $text: { $search: search },
       user_id: req.user._id,
-    })
-      .populate("user_id topic_id")
-      .select("-__v");
+    }).populate("user_id topic_id");
 
     return res
       .status(200)
