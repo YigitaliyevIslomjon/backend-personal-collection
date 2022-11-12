@@ -2,10 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const indexRoute = require("./routes/index");
 const errorHandler = require("./middleware/errorHandler");
-const dotenv = require("dotenv");
 const http = require("http");
 const socketIO = require("socket.io");
 const cors = require("cors");
+const dotenv = require("dotenv");
 dotenv.config();
 
 const app = express();
@@ -28,9 +28,7 @@ const server = http.createServer(app);
 const io = socketIO(server, {
   transports: ["polling"],
   cors: {
-    origin: isEnvProduction
-      ? "https://collection-personal-front.netlify.app"
-      : "http://localhost:3000",
+    origin: isEnvProduction ? process.env.URL : process.env.LOCAL_URL,
     methods: ["GET", "POST"],
     credential: true,
   },
